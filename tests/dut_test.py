@@ -1,12 +1,12 @@
 import cocotb
 from cocotb.triggers import Timer, RisingEdge, FallingEdge, ReadOnly, NextTimeStep
 from cocotb_bus.drivers import BusDriver
+from random import randint
 
 
 def sb_fn(actual_value):
     global expected_value
-    print(expected_value)
-    print(actual_value)
+    # print(actual_value)
     # expected_value.pop()
     assert actual_value==expected_value.pop(0),"Error arrived"
 
@@ -32,6 +32,13 @@ async def dut_test(dut):
         drv_o.append(3)
         expected_value.append(a[i]|b[i])
 
+    for i in range(20):
+        x=randint(0,1)
+        y=randint(0,1)
+        drv.append(4,value=x)
+        drv.append(5,value=y)
+        drv_o.append(3)
+        expected_value.append(x|y)
     while len(expected_value)>0:
         await Timer(2,'ns')
 
@@ -79,4 +86,3 @@ class OutputDriver(BusDriver):
             await RisingEdge(self.clk)
             await RisingEdge(self.clk)
             self.bus.en.value = 0
-            await NextTimeStep()
