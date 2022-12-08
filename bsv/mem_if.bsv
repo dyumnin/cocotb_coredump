@@ -14,7 +14,11 @@ module dut(Ifc_dut);
 	FIFOF#(Bool) y_ff <- mkFIFOF();
 	Wire#(Bool) a_data <-mkWire();
 	Wire#(Bool) b_data <-mkWire();
-	rule orit;
+	Reg#(Bit#(8)) counter <- mkRegA(0);
+	rule inc_cnt;
+		counter<=counter+1;
+	endrule
+	rule orit (counter==50);
 		Bool x=a_ff.first();
 		Bool z=b_ff.first();
 		y_ff.enq(x||z);
